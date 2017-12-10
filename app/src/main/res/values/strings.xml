@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PhotoHub</string>
+    <string name="facebook_app_id">1104173286367347</string>
+    <string name="fb_login_protocol_scheme">fb1104173286367347</string>
 </resources>
