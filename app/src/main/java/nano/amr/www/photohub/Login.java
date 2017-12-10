@@ -44,7 +44,7 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-
+                Log.e(getLocalClassName(),error.toString());
             }
         });
     }
