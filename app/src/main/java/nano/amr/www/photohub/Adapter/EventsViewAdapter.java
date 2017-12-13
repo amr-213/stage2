@@ -1,6 +1,7 @@
 package nano.amr.www.photohub.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,8 @@ import com.squareup.picasso.Picasso;
 import java.net.URL;
 import java.util.List;
 
+import nano.amr.www.photohub.EventView;
+import nano.amr.www.photohub.EventsList;
 import nano.amr.www.photohub.R;
 import nano.amr.www.photohub.models.DataEvents;
 import nano.amr.www.photohub.models.Event;
@@ -51,6 +54,7 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
 
         // Return a new holder instance
         EventCell viewHolder = new EventCell(contactView);
+
         return viewHolder;
     }
 
@@ -68,7 +72,7 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
         else return eventsList.size();
     }
 
-    public class EventCell extends RecyclerView.ViewHolder {
+    public class EventCell extends RecyclerView.ViewHolder implements View.OnClickListener{
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView eventName;
@@ -85,15 +89,28 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
             eventName = itemView.findViewById(R.id.EventName);
             imagesCount = itemView.findViewById(R.id.ImagesCountTextView);
             eventMainImage = itemView.findViewById(R.id.EventMainImageView);
+            itemView.setOnClickListener(this);
+
         }
 
         public void bind(DataEvents position){
             eventName.setText(position.getTitle());
             imagesCount.setText(""+position.getPhotosCount());
-            //TODO Load Image Asycn
+            //TODO Load Correct Image Size
             Picasso.with(getContext())
                     .load(""+position.getMainImageUrl())
                     .into(eventMainImage);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition(); // gets item position
+            if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
+                DataEvents contact = eventsList.get(position);
+                // We can access the data within the views
+                Intent intent = new Intent(getContext(), EventView.class);
+                getContext().startActivity(intent);
+            }
         }
     }
 }
