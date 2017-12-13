@@ -3,6 +3,7 @@ package nano.amr.www.photohub.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -109,6 +110,7 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
                 DataEvents contact = eventsList.get(position);
                 // We can access the data within the views
                 Intent intent = new Intent(getContext(), EventView.class);
+                intent.putExtra("galleryId", ""+contact.getId());
                 getContext().startActivity(intent);
             }
         }

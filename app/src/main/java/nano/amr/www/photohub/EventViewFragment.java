@@ -10,7 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import nano.amr.www.photohub.API.APIS;
 import nano.amr.www.photohub.API.Builder;
@@ -28,7 +31,7 @@ import retrofit2.Response;
 public class EventViewFragment extends Fragment {
 
     APIS apiInterface;
-
+    String gallerId = "6";
     public EventViewFragment() {
         // Required empty public constructor
     }
@@ -38,13 +41,15 @@ public class EventViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_event_view, container, false);
+        gallerId =  getActivity().getIntent().getStringExtra("galleryId");
+
+        final View root = inflater.inflate(R.layout.fragment_event_view, container, false);
 
         final RecyclerView eventRV = (RecyclerView) root.findViewById(R.id.eventRV);
 
         apiInterface = Builder.getClient().create(APIS.class);
 
-        Call<Event> call = apiInterface.getEvent(""+6);
+        Call<Event> call = apiInterface.getEvent(gallerId);
         
         call.enqueue(new Callback<Event>() {
             @Override
@@ -53,6 +58,13 @@ public class EventViewFragment extends Fragment {
                 Event event = response.body();
 
 //                Log.e(getActivity().getLocalClassName(), String.valueOf(event));
+                ImageView eventImage = root.findViewById(R.id.EventImageView);
+                TextView eventName = root.findViewById(R.id.EventName);
+                TextView photoCount = root.findViewById(R.id.ImagesCountTextView);
+                eventName.setText(event.getData().getTitle());
+                photoCount.setText(""+event.getData().getPhotosCount());
+                Picasso.with(getContext()).load(event.getData().getMainImageUrl()).into(eventImage);
+
 
                 if (event != null){
                     eventRV.setLayoutManager(new GridLayoutManager(getActivity(),4));
