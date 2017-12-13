@@ -21,6 +21,7 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.google.com' }
     google()
 }
 
@@ -43,6 +44,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'org.apache.commons:commons-lang3:3.6'
     provided 'org.glassfish:javax.annotation:10.0-b28'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
 
 }

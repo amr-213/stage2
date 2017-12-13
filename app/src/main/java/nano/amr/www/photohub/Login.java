@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -33,12 +34,12 @@ public class Login extends AppCompatActivity {
 
     private CallbackManager callbackManager;
     private LoginButton loginButton;
+    APIS apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        final APIS apiInterface;
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -56,36 +57,7 @@ public class Login extends AppCompatActivity {
                         + "\n" +
                         "Auth Token: "
                         + loginResult.getAccessToken().getToken());
-                // check for email perm. and show error if not avalible
-                if (loginResult.getAccessToken().getPermissions().contains("email")){
-                    Log.i(getLocalClassName(),"Has Email");
-
-                    Call<FacebookUser> call = apiInterface.getUser(loginResult.getAccessToken().getToken());
-
-                    call.enqueue(new Callback<FacebookUser>() {
-                        @Override
-                        public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
-                            int statusCode = response.code();
-                            FacebookUser user = response.body();
-                            Log.i(getLocalClassName(),user.getMeta().getToken());
-                            Global.UserToken = "bearer:" + user.getMeta().getToken();
-                            Intent intent = new Intent(Login.this, EventsList.class);
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailure(Call<FacebookUser> call, Throwable t) {
-
-                        }
-                    });
-
-
-
-                }else {
-                    Log.e(getLocalClassName(),"Does not have Email");
-                    LoginManager.getInstance().logOut();
-                    //TODO (1) Show Error MSG
-                }
+                ContinueWith(loginResult.getAccessToken());
 
             }
 
@@ -108,5 +80,48 @@ public class Login extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccessToken accessToken = null;
+        accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken != null && !accessToken.getToken().isEmpty()){
+            ContinueWith(accessToken);
+        }
+
+    }
+
+    private void ContinueWith(AccessToken accessToken){
+        if (accessToken.getPermissions().contains("email")){
+            Log.i(getLocalClassName(),"Has Email");
+
+            Call<FacebookUser> call = apiInterface.getUser(accessToken.getToken());
+
+            call.enqueue(new Callback<FacebookUser>() {
+                @Override
+                public void onResponse(Call<FacebookUser> call, Response<FacebookUser> response) {
+                    int statusCode = response.code();
+                    FacebookUser user = response.body();
+                    Log.i(getLocalClassName(),user.getMeta().getToken());
+                    Global.UserToken = "bearer:" + user.getMeta().getToken();
+                    Intent intent = new Intent(Login.this, EventsList.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Call<FacebookUser> call, Throwable t) {
+
+                }
+            });
+
+
+
+        }else {
+            Log.e(getLocalClassName(), "Does not have Email");
+            LoginManager.getInstance().logOut();
+            //TODO (1) Show Error MSG
+        }
     }
 }

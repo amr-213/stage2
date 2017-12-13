@@ -1,13 +1,20 @@
 package nano.amr.www.photohub.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
 import java.util.List;
 
 import nano.amr.www.photohub.R;
@@ -50,15 +57,15 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
     @Override
     public void onBindViewHolder(EventCell holder, int position) {
         DataEvents contact = eventsList.get(position);
+        holder.bind(contact);
+//        Log.i(getClass().getSimpleName(),String.valueOf(contact));
 
-        holder.eventName.setText(contact.getTitle());
-        holder.imagesCount.setText(contact.getPhotosCount());
-        //TODO Load Image Asycn
     }
 
     @Override
     public int getItemCount() {
-        return eventsList.size();
+        if(eventsList==null) return 0;
+        else return eventsList.size();
     }
 
     public class EventCell extends RecyclerView.ViewHolder {
@@ -78,6 +85,15 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
             eventName = itemView.findViewById(R.id.EventName);
             imagesCount = itemView.findViewById(R.id.ImagesCountTextView);
             eventMainImage = itemView.findViewById(R.id.EventMainImageView);
+        }
+
+        public void bind(DataEvents position){
+            eventName.setText(position.getTitle());
+            imagesCount.setText(""+position.getPhotosCount());
+            //TODO Load Image Asycn
+            Picasso.with(getContext())
+                    .load(""+position.getMainImageUrl())
+                    .into(eventMainImage);
         }
     }
 }

@@ -16,31 +16,13 @@ import retrofit2.Response;
 
 public class EventsList extends AppCompatActivity {
 
-    APIS apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_list);
 
-        apiInterface = Builder.getClient().create(APIS.class);
 
-        Call<EventsGallery> call = apiInterface.getEvents(1);
-
-       call.enqueue(new Callback<EventsGallery>() {
-           @Override
-           public void onResponse(Call<EventsGallery> call, Response<EventsGallery> response) {
-               int statusCode = response.code();
-               EventsGallery events = response.body();
-
-               Log.i(getLocalClassName(), String.valueOf(events.getData().size()));
-           }
-
-           @Override
-           public void onFailure(Call<EventsGallery> call, Throwable t) {
-
-           }
-       });
 
 
     }
