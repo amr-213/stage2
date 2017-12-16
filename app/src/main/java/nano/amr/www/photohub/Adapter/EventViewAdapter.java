@@ -1,6 +1,7 @@
 package nano.amr.www.photohub.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import java.net.URL;
 import java.util.List;
 
+import nano.amr.www.photohub.FullImgaeView;
 import nano.amr.www.photohub.R;
 import nano.amr.www.photohub.models.DataEvent;
 import nano.amr.www.photohub.models.Event;
@@ -68,10 +70,11 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Imag
         else return imageList.size();
     }
 
-    public class ImageCell extends RecyclerView.ViewHolder {
+    public class ImageCell extends RecyclerView.ViewHolder implements View.OnClickListener {
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public ImageView image;
+        String imageUrl;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -80,13 +83,22 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Imag
             // to access the context from any ViewHolder instance.
             super(itemView);
             image = itemView.findViewById(R.id.PhotoView);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Photo position){
             //TODO Load Correct Image Size
+            imageUrl = ""+position.getUrl();
             Picasso.with(getContext())
-                    .load(""+position.getUrl())
+                    .load(imageUrl)
                     .into(image);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent fullScreenIntent = new Intent(getContext(), FullImgaeView.class);
+            fullScreenIntent.setData(Uri.parse(imageUrl));
+            getContext().startActivity(fullScreenIntent);
         }
     }
 }
