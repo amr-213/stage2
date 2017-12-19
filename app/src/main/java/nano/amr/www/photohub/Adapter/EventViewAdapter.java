@@ -1,5 +1,6 @@
 package nano.amr.www.photohub.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,11 +14,18 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.cloudinary.Transformation;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
+import com.esafirm.imagepicker.features.ImagePicker;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+import nano.amr.www.photohub.EventViewFragment;
 import nano.amr.www.photohub.FullImgaeView;
 import nano.amr.www.photohub.R;
 import nano.amr.www.photohub.models.DataEvent;
@@ -88,9 +96,19 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Imag
 
         public void bind(Photo position){
             //TODO Load Correct Image Size
+
             imageUrl = ""+position.getUrl();
+
+            int indexofslash = imageUrl.lastIndexOf("/");
+
+            String url = MediaManager.get().url().transformation(new Transformation()
+                    .height(300)
+                    .width(300)
+                    .crop("fill")
+            ).generate(imageUrl.substring(indexofslash));
+
             Picasso.with(getContext())
-                    .load(imageUrl)
+                    .load(url)
                     .into(image);
         }
 
@@ -100,5 +118,8 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Imag
             fullScreenIntent.setData(Uri.parse(imageUrl));
             getContext().startActivity(fullScreenIntent);
         }
+
+
+
     }
 }
