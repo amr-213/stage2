@@ -85,6 +85,13 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        String Token = new Global().getUserToken(this);
+        Log.e("Global",Token);
+        if (!Token.isEmpty()){
+            Intent intent = new Intent(Login.this, EventsList.class);
+            startActivity(intent);
+            return;
+        }
         AccessToken accessToken = null;
         accessToken = AccessToken.getCurrentAccessToken();
         if (accessToken != null && !accessToken.getToken().isEmpty()){
@@ -106,6 +113,7 @@ public class Login extends AppCompatActivity {
                     FacebookUser user = response.body();
                     Log.i(getLocalClassName(),user.getMeta().getToken());
                     Global.UserToken = "bearer:" + user.getMeta().getToken();
+                    new Global().setUserToken(Global.UserToken,Login.this);
                     Intent intent = new Intent(Login.this, EventsList.class);
                     startActivity(intent);
                 }

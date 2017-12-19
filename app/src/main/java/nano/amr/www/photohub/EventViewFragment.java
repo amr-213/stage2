@@ -327,4 +327,10 @@ public class EventViewFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        GetEventInfo();
+    }
 }

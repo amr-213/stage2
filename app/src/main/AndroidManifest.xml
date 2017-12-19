@@ -59,6 +59,18 @@
             android:name=".FAP"
             android:label="@string/title_activity_fap"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <service android:name=".DownlaodImageService"
+            android:enabled="true"></service>
+
+        <receiver android:name=".SampleAppWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sample_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
