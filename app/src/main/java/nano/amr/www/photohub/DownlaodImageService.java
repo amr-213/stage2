@@ -1,7 +1,9 @@
 package nano.amr.www.photohub;
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -14,6 +16,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import nano.amr.www.photohub.ContentProvider.PhotoContentProvider;
+import nano.amr.www.photohub.ContentProvider.PhotoTable;
 
 /**
  * Created by amr on 12/20/17.
@@ -62,6 +67,15 @@ public class DownlaodImageService extends IntentService {
             }
             os.close();
             is.close();
+
+            String finalPath = downloadFile.getPath();
+            Log.i("Image File Path", String.valueOf(finalPath));
+
+            ContentValues values = new ContentValues();
+            values.put(PhotoTable.COLUMN_PATH, finalPath);
+
+            Uri todoUri = getContentResolver().insert(PhotoContentProvider.CONTENT_URI,values);
+            Log.i("Image DB insert", String.valueOf(todoUri));
 
         } catch (Exception e) {
             e.printStackTrace();

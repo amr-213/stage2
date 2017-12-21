@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -98,6 +100,8 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
             eventName.setText(position.getTitle());
             imagesCount.setText(""+position.getPhotosCount());
             //TODO Load Correct Image Size
+//            Uri file = FileProvider.getUriForFile(getContext(),getContext().getApplicationContext().getPackageName()+".my.package.name.provider",new File("/sdcard/PhotoHub/xj2itdqjfrcv9l9w51u1.jpg"));
+//            Log.w("WidgetExample", String.valueOf(file));
             Picasso.with(getContext())
                     .load(""+position.getMainImageUrl())
                     .into(eventMainImage);
