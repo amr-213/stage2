@@ -9,6 +9,8 @@ import com.cloudinary.android.MediaManager;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import nano.amr.www.photohub.API.APIS;
 import nano.amr.www.photohub.API.Builder;
@@ -21,11 +23,15 @@ import retrofit2.Response;
 
 public class EventsList extends AppCompatActivity {
 
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_list);
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         try {
             MediaManager.get();
@@ -71,5 +77,12 @@ public class EventsList extends AppCompatActivity {
                 Log.i("AD","Ad Closed");
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("Image~" + getLocalClassName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }
