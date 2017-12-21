@@ -27,11 +27,5 @@ public class EventView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_view);
-        try {
-            MediaManager.get();
-        }catch (IllegalStateException error){
-            MediaManager.init(this);
-        }
-
     }
 }

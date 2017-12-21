@@ -16,6 +16,7 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.ads.MobileAds;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -72,6 +73,7 @@ public class Login extends AppCompatActivity {
                 Log.e(getLocalClassName(),error.toString());
             }
         });
+        MobileAds.initialize(this, "ca-app-pub-6132663058121354~5597198462");
 
     }
 

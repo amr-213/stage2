@@ -160,7 +160,7 @@ public class EventsListViewFragment extends Fragment {
 
 //                Log.e(getActivity().getLocalClassName(), String.valueOf(events));
 
-                if (events != null){
+                if (events != null&&events.getMeta().getStatusCode() == 600){
                     EventsViewAdapter adapter = new EventsViewAdapter(getActivity(), events.getData());
                     eventsRv.setAdapter(adapter);
                     Log.i(getActivity().getLocalClassName(), String.valueOf(events.getData().size()));

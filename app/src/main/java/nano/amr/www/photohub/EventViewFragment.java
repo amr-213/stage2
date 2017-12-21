@@ -81,7 +81,12 @@ public class EventViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        gallerId =  getActivity().getIntent().getStringExtra("galleryId");
+        String d = getActivity().getIntent().getStringExtra("galleryId");
+        if ((d == null || d.isEmpty())){
+            gallerId = "1";
+        }else {
+            gallerId = d;
+        }
 
         final View root = inflater.inflate(R.layout.fragment_event_view, container, false);
 
@@ -145,8 +150,8 @@ public class EventViewFragment extends Fragment {
             public void onResponse(Call<Event> call, Response<Event> response) {
                 int statusCode = response.code();
                 thisEvent = response.body();
-
-                if (this != null){
+                Log.e("Event",String.valueOf(thisEvent));
+                if (thisEvent != null&&thisEvent.getMeta().getStatusCode() == 600){
                     eventName.setText(thisEvent.getData().getTitle());
                     photoCount.setText(""+thisEvent.getData().getPhotosCount());
                     Log.e("EventView", String.valueOf(thisEvent.getData()));
@@ -161,6 +166,16 @@ public class EventViewFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getArguments() == null){
+            gallerId = "1";
+        }else {
+            gallerId = getArguments().getString("galleryId");;
+        }
     }
 
     //closes FAB submenus

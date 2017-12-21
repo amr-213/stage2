@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.List;
 
 import nano.amr.www.photohub.EventView;
+import nano.amr.www.photohub.EventViewFragment;
 import nano.amr.www.photohub.EventsList;
 import nano.amr.www.photohub.R;
 import nano.amr.www.photohub.models.DataEvents;
@@ -113,9 +114,18 @@ public class EventsViewAdapter extends RecyclerView.Adapter<EventsViewAdapter.Ev
             if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
                 DataEvents contact = eventsList.get(position);
                 // We can access the data within the views
-                Intent intent = new Intent(getContext(), EventView.class);
-                intent.putExtra("galleryId", ""+contact.getId());
-                getContext().startActivity(intent);
+                boolean tabletSize = getContext().getResources().getBoolean(R.bool.isTablet);
+                if (tabletSize) {
+                    Intent intent = new Intent(getContext(), EventsList.class);
+                    intent.putExtra("galleryId", ""+contact.getId());
+                    getContext().startActivity(intent);
+                } else {
+                    Intent intent = new Intent(getContext(), EventView.class);
+                    intent.putExtra("galleryId", ""+contact.getId());
+                    getContext().startActivity(intent);
+                }
+
+
             }
         }
     }
