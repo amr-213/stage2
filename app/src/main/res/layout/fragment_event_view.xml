@@ -81,5 +81,12 @@ android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
 
     <include layout="@layout/layout_fab_event"/>
+    <ProgressBar
+        android:id="@+id/EventProgBar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

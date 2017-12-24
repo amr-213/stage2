@@ -1,11 +1,16 @@
 package nano.amr.www.photohub;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -15,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import nano.amr.www.photohub.API.APIS;
@@ -31,14 +37,16 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EventsListViewFragment extends Fragment {
+public class EventsListViewFragment extends Fragment implements LoaderManager.LoaderCallbacks<EventsViewAdapter> {
 
     APIS apiInterface;
+    public static final int OPERATION_DATA_LOADER = 22;
+
     private boolean fabExpanded = false;
     private FloatingActionButton fabSettings;
     private LinearLayout layoutFabSave;
     private LinearLayout layoutFabEdit;
-
+    private ProgressBar progressBar;
     private String newEventName = "";
     private String inviteCode = "";
 
@@ -59,7 +67,7 @@ public class EventsListViewFragment extends Fragment {
         eventsRv.setAdapter(null);
 
         fabSettings = (FloatingActionButton) root.findViewById(R.id.fabSetting);
-
+        progressBar = root.findViewById(R.id.EventsProgBar);
         layoutFabSave = (LinearLayout) root.findViewById(R.id.layoutFabSave);
         layoutFabEdit = (LinearLayout) root.findViewById(R.id.layoutFabEdit);
 
@@ -150,28 +158,12 @@ public class EventsListViewFragment extends Fragment {
     }
 
     private void GetEvents(){
-        Call<EventsGallery> call = apiInterface.getEvents(1);
 
-        call.enqueue(new Callback<EventsGallery>() {
-            @Override
-            public void onResponse(Call<EventsGallery> call, Response<EventsGallery> response) {
-                int statusCode = response.code();
-                EventsGallery events = response.body();
-
-//                Log.e(getActivity().getLocalClassName(), String.valueOf(events));
-
-                if (events != null&&events.getMeta().getStatusCode() == 600){
-                    EventsViewAdapter adapter = new EventsViewAdapter(getActivity(), events.getData());
-                    eventsRv.setAdapter(adapter);
-                    Log.i(getActivity().getLocalClassName(), String.valueOf(events.getData().size()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<EventsGallery> call, Throwable t) {
-
-            }
-        });
+        if(getLoaderManager()==null){
+            getLoaderManager().initLoader(OPERATION_DATA_LOADER,null,this);
+        }else{
+            getLoaderManager().restartLoader(OPERATION_DATA_LOADER, null, this);
+        }
     }
     //closes FAB submenus
     private void closeSubMenusFab(){
@@ -224,5 +216,79 @@ public class EventsListViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         GetEvents();
+    }
+
+    private void UpdateUdapter(EventsViewAdapter adapter){
+        eventsRv.setAdapter(adapter);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public Loader<EventsViewAdapter> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<EventsViewAdapter>(getContext()) {
+            @Nullable
+            @Override
+            public EventsViewAdapter loadInBackground() {
+                Call<EventsGallery> call = apiInterface.getEvents(1);
+
+
+                try {
+                    Response<EventsGallery> response = call.execute();
+                    EventsGallery events = response.body();
+                    Log.e(getActivity().getLocalClassName(), String.valueOf(events));
+
+                    if (events != null&&events.getMeta().getStatusCode() == 600){
+                        EventsViewAdapter adapter = new EventsViewAdapter(getActivity(), events.getData());
+//                        UpdateUdapter(adapter);
+                        Log.i(getActivity().getLocalClassName(), String.valueOf(events.getData().size()));
+                        return adapter;
+                    }
+                }catch (Exception error){
+                    Log.e(getActivity().getLocalClassName(),error.toString());
+                }
+
+
+
+//                call.enqueue(new Callback<EventsGallery>() {
+//                    @Override
+//                    public void onResponse(Call<EventsGallery> call, Response<EventsGallery> response) {
+//                        int statusCode = response.code();
+//                        EventsGallery events = response.body();
+//
+//                        Log.e(getActivity().getLocalClassName(), String.valueOf(events));
+//
+//                        if (events != null&&events.getMeta().getStatusCode() == 600){
+//                            EventsViewAdapter adapter = new EventsViewAdapter(getActivity(), events.getData());
+//                            UpdateUdapter(adapter);
+//                            Log.i(getActivity().getLocalClassName(), String.valueOf(events.getData().size()));
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<EventsGallery> call, Throwable t) {
+//
+//                    }
+//                });
+                return null;
+            }
+
+            @Override
+            protected void onStartLoading() {
+                super.onStartLoading();
+                progressBar.setVisibility(View.VISIBLE);
+                forceLoad();
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<EventsViewAdapter> loader, EventsViewAdapter data) {
+        progressBar.setVisibility(View.INVISIBLE);
+        UpdateUdapter(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<EventsViewAdapter> loader) {
+
     }
 }

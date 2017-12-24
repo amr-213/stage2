@@ -24,4 +24,12 @@
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-6132663058121354/4284116794"/>
 
+    <ProgressBar
+        android:id="@+id/EventsProgBar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
+
 </RelativeLayout>

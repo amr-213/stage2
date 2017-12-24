@@ -77,6 +77,10 @@ public class EventsList extends AppCompatActivity {
                 Log.i("AD","Ad Closed");
             }
         });
+
+
+
+
     }
 
     @Override
